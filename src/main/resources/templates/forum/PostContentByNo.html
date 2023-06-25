@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description"
+		content="Responsive Bootstrap4 Shop Template, Created by Imran Hossain from https://imransdesign.com/">
+
+	<!-- title -->
+	<title>登山EZ</title>
+
+	<style>
+		.comment-user-avater img{
+			height: 60px;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="~{layout/frontTopBar}"></div>
+	<!--PreLoader-->
+	<div class="loader">
+		<div class="loader-inner">
+			<div class="circle"></div>
+		</div>
+	</div>
+	<!--PreLoader Ends-->
+
+	<!-- breadcrumb-section -->
+	<div class="breadcrumb-section breadcrumb-bg">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 offset-lg-2 text-center">
+					<div class="breadcrumb-text">
+						<p>大自然的秘密，在你探索中揭示</p>
+						<h1>探索者之家</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end breadcrumb section -->
+
+	<!-- single article section -->
+	<div class="mt-150 mb-150">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="single-article-section">
+						<div class="single-article-text">
+							<div class="single-artcile-bg"
+								th:style="'background-image: url(data:image/jpeg;base64,' + ${post.getPostAlbumBase64()} + ');'">
+							</div>
+							<p class="blog-meta">
+								<span class="author"><i class="fas fa-user"></i><span
+										th:text="${post.member.memberName}"></span></span>
+								<span class="date"><i class="fas fa-calendar"></i> <span
+										th:text="${#dates.format(post.postDate, 'yyyy/MM/dd HH:mm:ss')}"></span></span>
+							</p>
+							<h2 th:text="${post.postTitle}"></h2>
+							<div class="content" th:text="${post.postContent}" style="color:black; font-size: 20px">
+							</div>
+						</div>
+
+						<div class="comments-list-wrap">
+							<h4 class="comment-count-title" th:text="${#lists.size(comments)} + ' 則留言'"></h4>
+							<div class="comment-list" th:each="comment : ${comments}">
+								<div class="single-comment-body">
+									<div class="comment-user-avater">
+										<img th:src="'/HiCamp/getphoto?memberNo='+${comment.memberNo}" alt="">
+									</div>
+									<div class="comment-text-body">
+										<h4>
+											<span th:text="${comment.member.memberName}"></span>
+											<span class="comment-date"
+												th:text="${#dates.format(comment.postCommentDate, 'MM/dd HH:mm')}"></span>
+											<a href="#">回覆</a>
+											<a href="#">修改</a>
+											<a class="delete-comment-btn" data-commentid="${comment.postCommentNo}">刪除</a>
+										</h4>
+										<p th:text="${comment.postComment}"></p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="comment-template">
+							<h4>我覺得..</h4>
+							<form id="commentForm" action="#">
+								<input type="hidden" id="postNo" name="postNo" th:value="${post.postNo}">
+								<p><textarea name="postComment" id="postComment" style="width: 500px; height: 100px;"
+										placeholder="留言.." required></textarea></p>
+								<p><input type="submit" value="送出" id="submitBtn"></p>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="sidebar-section">
+						<div class="recent-posts">
+							<h4>其他文章</h4>
+							<ul>
+								<li><a href="single-news.html">【徵文活動】你，發現了什麼不一樣的陽明山？</a></li>
+								<li><a href="single-news.html">【新聞】露營別亂砍、亂燒漂流木 9溪床露營客違反森林法起訴</a></li>
+								<li><a href="single-news.html">《群山之島》XR特展登場 帶領觀眾沉浸式體驗山林世界</a></li>
+								<li><a href="single-news.html">【新聞】85公斤公熊左前肢困套索 活活脫水渴死命喪大雪山</a></li>
+								<li><a href="single-news.html">【步道資訊】八通關玉山線八通關往荖濃溪營地步道2.7K處崩塌阻礙...</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end single article section -->
+
+	<div th:replace="~{layout/frontBottomBar}"></div>
+	<script>
+		document.getElementById('submitBtn').addEventListener('click', function (event) {
+			event.preventDefault();
+
+			const postNo = document.getElementById('postNo').value;
+			const postCommentText = document.getElementById('postComment').value;
+
+			const dtoJsObject = { postNo: postNo, postCommentText: postCommentText };
+			const dtoJsonString = JSON.stringify(dtoJsObject);
+			const url = 'http://localhost:8080/HiCamp/forum/addcomment';  
+
+			fetch(url, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: dtoJsonString
+			})
+
+				.then((response) => {
+					return response.json();
+				})
+				.then((data) => {
+					console.log(data);
+
+					var date = new Date(data.postCommentDate);
+
+					var month = (date.getMonth() + 1).toString().padStart(2, '0');
+					var day = date.getDate().toString().padStart(2, '0');
+					var hour = date.getHours().toString().padStart(2, '0');
+					var minute = date.getMinutes().toString().padStart(2, '0');
+					var formattedDate = month + '/' + day + ' ' + hour + ':' + minute;
+
+					let commentList = `<div class="comment-list">
+							<div class="single-comment-body">
+								<div class="comment-user-avater">
+									<img src="http://localhost:8080/HiCamp/getphoto?memberNo=`+ data.member.memberNo + `" alt="">
+								</div>
+								<div class="comment-text-body">
+									<h4>
+										<span>`+ data.member.memberName + `</span>
+										<span class="comment-date">`+ formattedDate + `</span>
+										<a href="#">回覆</a>
+										<a href="#">修改</a>
+										<a href="#">刪除</a>
+									</h4>
+									<p>`+ data.postComment + `</p>
+								</div>
+							</div>
+						</div>`;
+					console.log(commentList);
+					$(".comments-list-wrap").append(commentList);
+
+					document.getElementById('commentForm').reset();
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+					window.alert('請登入會員！');
+				});
+		});
+		
+		//////////////////////////// 刪除留言
+		function addDeleteListeners() {
+	    const deleteCommentButtons = document.querySelectorAll('.delete-comment-btn');
+	
+	    deleteCommentButtons.forEach(button => {
+	        button.addEventListener('click', function(event) {
+	            event.preventDefault(); // 阻止<a>標籤的預設動作
+	            const commentId = this.dataset.commentid;
+	            deleteCommentAjaxReq(commentId);
+	        });
+	    });
+	}
+
+	addDeleteListeners();
+		
+		function deleteCommentAjaxReq(deleteId) {
+		    axios({
+		        method: 'delete',
+		        url: 'http://localhost:8080/HiCamp/forum/deleteComment', // 根據您的需求修改 URL
+		        params: {
+		            id: deleteId
+		        },
+		        responseType: 'document',
+		        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+		    })
+		    .then(res => {
+		        console.log('res: ' + JSON.stringify(res));
+		        window.location.href = 'http://localhost:8080/forum/showall'; // 重導向至更新後的頁面
+		    })
+		    .catch(err => {
+		        console.error('err: ' + err);
+		    });
+		}
+	</script>
+</body>
+
+</html>
