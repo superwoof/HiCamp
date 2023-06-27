@@ -49,4 +49,5 @@ public class PostComment{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "memberNo")
 	private Member member;
+	
 }

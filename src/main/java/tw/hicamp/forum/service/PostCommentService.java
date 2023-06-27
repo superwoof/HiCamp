@@ -16,30 +16,40 @@ import tw.hicamp.forum.model.PostCommentRepository;
 public class PostCommentService {
 	
 	@Autowired
-	private PostCommentRepository pcRepository;
+	private PostCommentRepository postCommentRepository;
 	
 	public PostComment insertComment(PostComment postComment) {
-		return pcRepository.save(postComment);
+		return postCommentRepository.save(postComment);
+	}
+	
+	public PostComment getCommentByCommentNo(Integer postCommentNo) {
+		Optional<PostComment> optional = postCommentRepository.findById(postCommentNo);
+		
+		if(optional.isPresent()) {
+			return optional.get();
+		}
+		
+		return null;
 	}
 	
 	@Transactional
 	public PostComment updateComment(PostComment postComment) {
-		Optional<PostComment> optional = pcRepository.findById(postComment.getPostCommentNo());
+		Optional<PostComment> optional = postCommentRepository.findById(postComment.getPostCommentNo());
 		
 		if(optional.isPresent()) {
 			PostComment existingComment = optional.get();
 			existingComment.setPostComment(postComment.getPostComment());
 			existingComment.setPostCommentDate(postComment.getPostCommentDate());
 
-			return pcRepository.save(existingComment);
+			return postCommentRepository.save(existingComment);
 		}
 		
 		return null;
 	}
 	
 	public boolean deleteComment(Integer postCommentNo) {
-		if(pcRepository.existsById(postCommentNo)) {
-			pcRepository.deleteById(postCommentNo);
+		if(postCommentRepository.existsById(postCommentNo)) {
+			postCommentRepository.deleteById(postCommentNo);
 			return true;
 		}
 		
@@ -47,7 +57,8 @@ public class PostCommentService {
 	}
 	
 	public List<PostComment> getCommentsByPostSortedByNo(Post post) {
-	    return pcRepository.findByPostOrderByPostCommentNo(post);
+	    return postCommentRepository.findByPostOrderByPostCommentNo(post);
 	}
+
 
 }

@@ -3,14 +3,18 @@ package tw.hicamp.forum.controller;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import tw.hicamp.forum.model.Post;
 import tw.hicamp.forum.model.PostComment;
 import tw.hicamp.forum.service.PostCommentService;
@@ -26,6 +30,9 @@ public class UpdatePostController {
 	@Autowired
 	private PostCommentService postcommentService;
 	
+	@Autowired
+	private HttpSession session;
+	
 	// 修改貼文
 	@GetMapping("/forum/update/{postNo}")
 	public String updatePostMain(@PathVariable("postNo") Integer postNo, Model model) {
@@ -37,7 +44,8 @@ public class UpdatePostController {
 	
 	@PostMapping("/forum/updated/{postNo}")
 	public String updatePost(@ModelAttribute("post") Post post,Model model) {
-		post.setMemberNo(1);
+		Integer memberNo = (Integer) session.getAttribute("memberNo");
+		post.setMemberNo(memberNo);
 		post.setPostDate(new Date());
 		
 		postService.updatePost(post);
@@ -48,26 +56,27 @@ public class UpdatePostController {
 	}
 	
 	// 修改留言
-	@PostMapping("/UpdatePostComment")
-	    public String updatePostComment(
-	    		@RequestParam("postNo") Integer postNo,
-	    		@RequestParam("postCommentNo") Integer postCommentNo,
-	    		@RequestParam("updatedPostComment") String updatedPostComment,
-	    		@ModelAttribute("postComment")PostComment postComment) {
-	    	
-	    	int memberNo = 1;
-	        Date postCommentDate = new Date();
-	        
-	        Post post = postService.getPostbyNo(postNo);
-	        
-	        postComment.setPost(post);
-	        postComment.setMemberNo(memberNo);
-	        postComment.setPostCommentNo(postCommentNo);
-	        postComment.setPostComment(updatedPostComment);
-	        postComment.setPostCommentDate(postCommentDate);
-	        
-	        postcommentService.updateComment(postComment);
+	@ResponseBody
+	@PutMapping("/forum/{postNo}/comments/{postCommentNo}")
+	public ResponseEntity<Void> updatePostComment(
+	    @PathVariable("postNo") Integer postNo,
+	    @PathVariable("postCommentNo") Integer postCommentNo,
+	    @RequestBody PostComment updatedPostComment
+	    ) {
+	    
+	    session.getAttribute("memberNo");
+	    Date postCommentDate = new Date();
+	    
+	    postService.getPostbyNo(postNo);
+	    
+	    PostComment existingPostComment = postcommentService.getCommentByCommentNo(postCommentNo);
+	    
+	    existingPostComment.setPostComment(updatedPostComment.getPostComment());
+	    existingPostComment.setPostCommentDate(postCommentDate);
+	    
+	    postcommentService.updateComment(existingPostComment);
 
-	        return "redirect:/forum/showpostbyno/" + postNo;
-	    }
+	    return ResponseEntity.ok().build();
+	}
+
 }

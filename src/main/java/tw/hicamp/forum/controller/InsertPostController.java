@@ -36,9 +36,12 @@ public class InsertPostController {
     @Autowired
     private MemberService memberService;
     
+    @Autowired
+    private HttpSession session;
+    
     // 新增貼文
     @GetMapping("/forum/add")
-    public String insertPostMain(HttpSession session,Model model) {
+    public String insertPostMain(Model model) {
        	if (session.getAttribute("memberNo") == null) {
     		return "redirect:/projectmemberlogin"; 
     	}
@@ -48,7 +51,7 @@ public class InsertPostController {
     }
 
     @PostMapping("/forum/added")
-    public String insertPost(@ModelAttribute("post")Post post,HttpSession session,Model model) {
+    public String insertPost(@ModelAttribute("post")Post post,Model model) {
     	Integer memberNo = (Integer) session.getAttribute("memberNo");
     	
     	Member member = memberService.findByNo(memberNo);
@@ -67,7 +70,7 @@ public class InsertPostController {
     // 新增留言
     @ResponseBody
     @PostMapping("/forum/addcomment")
-    public PostComment insertPostComment(@RequestBody PostCommentDTO postCommentDTO,HttpSession session) {
+    public PostComment insertPostComment(@RequestBody PostCommentDTO postCommentDTO) {
       	Integer memberNo = (Integer) session.getAttribute("memberNo");
     	if (memberNo == null) {
     		 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "請登入會員");

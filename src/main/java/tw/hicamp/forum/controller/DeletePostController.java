@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -36,7 +36,8 @@ public class DeletePostController{
 	// 刪除留言
 	@ResponseBody
 	@DeleteMapping("/forum/deleteComment")
-	public Map<String, Object> deletePostComment(@RequestParam("postCommentNo") Integer postCommentNo) {
+	public Map<String, Object> deletePostComment(@RequestBody Map<String, Integer> params) {
+		Integer postCommentNo = params.get("postCommentNo");
         Map<String, Object> result = new HashMap<>();
         try {
         	postcommentService.deleteComment(postCommentNo);

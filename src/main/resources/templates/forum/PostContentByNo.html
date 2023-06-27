@@ -12,8 +12,13 @@
 	<title>登山EZ</title>
 
 	<style>
-		.comment-user-avater img{
+		.comment-user-avater img {
 			height: 60px;
+		}
+
+		.save-comment-btn,
+		.cancel-edit-btn {
+			margin-right: 10px;
 		}
 	</style>
 </head>
@@ -76,22 +81,42 @@
 											<span th:text="${comment.member.memberName}"></span>
 											<span class="comment-date"
 												th:text="${#dates.format(comment.postCommentDate, 'MM/dd HH:mm')}"></span>
-											<a href="#">回覆</a>
-											<a href="#">修改</a>
-											<a class="delete-comment-btn" data-commentid="${comment.postCommentNo}">刪除</a>
+											<a class="reply-btn" th:data-commentid="${comment.postCommentNo}">回覆</a>
+											<a class="edit-comment-btn"
+												th:data-commentid="${comment.postCommentNo}">修改</a>
+											<a class="delete-comment-btn"
+												th:data-commentid="${comment.postCommentNo}">刪除</a>
 										</h4>
 										<p th:text="${comment.postComment}"></p>
+									</div>
+									<div class="single-comment-body child">
+										<div class="comment-user-avater">
+											<img th:src="'/HiCamp/getphoto?memberNo='+${comment.memberNo}" alt="">
+										</div>
+										<div class="comment-text-body">
+											<h4>
+												<span th:text="${comment.member.memberName}"></span>
+												<span class="comment-date"
+													th:text="${#dates.format(comment.postCommentDate, 'MM/dd HH:mm')}"></span>
+												<a class="reply-btn" th:data-commentid="${comment.postCommentNo}">回覆</a>
+												<a class="edit-comment-btn"
+													th:data-commentid="${comment.postCommentNo}">修改</a>
+												<a class="delete-comment-btn"
+													th:data-commentid="${comment.postCommentNo}">刪除</a>
+											</h4>
+											<p th:text="${comment.postComment}"></p>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						<div class="comment-template">
-							<h4>我覺得..</h4>
+							<h4>留言</h4>
 							<form id="commentForm" action="#">
 								<input type="hidden" id="postNo" name="postNo" th:value="${post.postNo}">
 								<p><textarea name="postComment" id="postComment" style="width: 500px; height: 100px;"
-										placeholder="留言.." required></textarea></p>
+										placeholder="回覆.." required></textarea></p>
 								<p><input type="submit" value="送出" id="submitBtn"></p>
 							</form>
 						</div>
@@ -118,6 +143,7 @@
 
 	<div th:replace="~{layout/frontBottomBar}"></div>
 	<script>
+		// 新增留言
 		document.getElementById('submitBtn').addEventListener('click', function (event) {
 			event.preventDefault();
 
@@ -126,7 +152,7 @@
 
 			const dtoJsObject = { postNo: postNo, postCommentText: postCommentText };
 			const dtoJsonString = JSON.stringify(dtoJsObject);
-			const url = 'http://localhost:8080/HiCamp/forum/addcomment';  
+			const url = 'http://localhost:8080/HiCamp/forum/addcomment';
 
 			fetch(url, {
 				method: 'POST',
@@ -159,7 +185,7 @@
 										<span class="comment-date">`+ formattedDate + `</span>
 										<a href="#">回覆</a>
 										<a href="#">修改</a>
-										<a href="#">刪除</a>
+										<a class="delete-comment-btn" onclick="deleteCommentAjaxReq(`+ data.postCommentNo + `)">刪除</a>
 									</h4>
 									<p>`+ data.postComment + `</p>
 								</div>
@@ -174,41 +200,111 @@
 					console.error('Error:', error);
 					window.alert('請登入會員！');
 				});
+			$(".delete-comment-btn").click(function () {
+				let commentId = $(this).attr("data-commentid");
+				deleteCommentAjaxReq(commentId);
+			})
 		});
-		
-		//////////////////////////// 刪除留言
-		function addDeleteListeners() {
-	    const deleteCommentButtons = document.querySelectorAll('.delete-comment-btn');
-	
-	    deleteCommentButtons.forEach(button => {
-	        button.addEventListener('click', function(event) {
-	            event.preventDefault(); // 阻止<a>標籤的預設動作
-	            const commentId = this.dataset.commentid;
-	            deleteCommentAjaxReq(commentId);
-	        });
-	    });
-	}
 
-	addDeleteListeners();
-		
-		function deleteCommentAjaxReq(deleteId) {
-		    axios({
-		        method: 'delete',
-		        url: 'http://localhost:8080/HiCamp/forum/deleteComment', // 根據您的需求修改 URL
-		        params: {
-		            id: deleteId
-		        },
-		        responseType: 'document',
-		        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-		    })
-		    .then(res => {
-		        console.log('res: ' + JSON.stringify(res));
-		        window.location.href = 'http://localhost:8080/forum/showall'; // 重導向至更新後的頁面
-		    })
-		    .catch(err => {
-		        console.error('err: ' + err);
-		    });
+		// 刪除留言
+		document.addEventListener('DOMContentLoaded', (event) => {
+			addDeleteListeners();
+		});
+		function addDeleteListeners() {
+			const deleteCommentButtons = document.getElementsByClassName('delete-comment-btn');
+			Array.from(deleteCommentButtons).forEach(button => {
+				button.addEventListener('click', function (event) {
+					event.preventDefault();
+					const commentId = button.getAttribute("data-commentid");
+					deleteCommentAjaxReq(commentId);
+				});
+			});
 		}
+
+		function deleteCommentAjaxReq(commentId) {
+			if (window.confirm('確定要刪除嗎？')) {
+				axios.request({
+					method: 'DELETE',
+					url: 'http://localhost:8080/HiCamp/forum/deleteComment',
+					data: {
+						postCommentNo: Number(commentId)
+					},
+					headers: { 'Content-Type': 'application/json' }
+				})
+					.then(res => {
+						console.log('res: ' + JSON.stringify(res));
+						document.querySelector(`[data-commentid="${commentId}"]`).closest('.single-comment-body').remove();
+					})
+					.catch(err => {
+						console.error('Error:', err.response);
+					});
+			}
+		}
+		// 修改留言
+		document.addEventListener('DOMContentLoaded', (event) => {
+			addEditListeners();
+		});
+		function addEditListeners() {
+			const editCommentButtons = document.getElementsByClassName('edit-comment-btn');
+			Array.from(editCommentButtons).forEach(button => {
+				button.addEventListener('click', function (event) {
+					event.preventDefault();
+
+					let postNo = document.getElementById('postNo').value;
+					let commentBody = button.closest('.comment-text-body');
+					let commentTextElem = commentBody.querySelector('p');
+
+					let textarea = document.createElement('textarea');
+					textarea.textContent = commentTextElem.textContent;
+
+					let saveBtn = document.createElement('a');
+					saveBtn.textContent = '確認';
+					saveBtn.classList.add('save-comment-btn');
+
+					let cancelBtn = document.createElement('a');
+					cancelBtn.textContent = '取消';
+					cancelBtn.classList.add('cancel-edit-btn');
+
+					commentBody.replaceChild(textarea, commentTextElem);
+					commentBody.appendChild(saveBtn);
+					commentBody.appendChild(cancelBtn);
+
+					saveBtn.addEventListener('click', function (event) {
+						event.preventDefault();
+
+						let p = document.createElement('p');
+						p.textContent = textarea.value;
+						commentBody.replaceChild(p, textarea);
+
+						commentBody.removeChild(saveBtn);
+						commentBody.removeChild(cancelBtn);
+
+						let commentId = button.getAttribute("data-commentid");
+						const url = 'http://localhost:8080/HiCamp/forum/' + postNo + '/comments/' + commentId;
+						const updatedComment = { postComment: textarea.value }; // Ensure the property names match the backend object
+
+						axios.put(url, updatedComment)
+							.then(response => {
+								console.log(response.data);
+							})
+							.catch(error => {
+								console.error(error);
+							});
+					});
+
+					cancelBtn.addEventListener('click', function (event) {
+						event.preventDefault();
+
+						commentBody.replaceChild(commentTextElem, textarea);
+
+						commentBody.removeChild(saveBtn);
+						commentBody.removeChild(cancelBtn);
+					});
+
+				});
+			});
+		}
+
 	</script>
 </body>
 

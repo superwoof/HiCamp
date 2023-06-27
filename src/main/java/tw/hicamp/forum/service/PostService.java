@@ -14,14 +14,14 @@ import tw.hicamp.forum.model.PostRepository;
 public class PostService {
 	
 	@Autowired
-	private PostRepository pRepository;
+	private PostRepository postRepository;
 	
 	public Post insertPost(Post post) {
-		return pRepository.save(post);
+		return postRepository.save(post);
 	}
 	
 	public Post getPostbyNo(Integer postNo) {
-		Optional<Post> optional = pRepository.findById(postNo);
+		Optional<Post> optional = postRepository.findById(postNo);
 		
 		if(optional.isPresent()) {
 			return optional.get();
@@ -31,16 +31,16 @@ public class PostService {
 	}
 	
 	public List<Post> getPostbyTitle(String postTitle) {
-		return pRepository.findByPostTitle(postTitle);
+		return postRepository.findByPostTitle(postTitle);
 	}
 	
 	public List<Post> getAllPosts() {
-		return pRepository.findAllByOrderByPostNoDesc();
+		return postRepository.findAllByOrderByPostNoDesc();
 	}
 	
 	@Transactional
 	public Post updatePost(Post post) {
-		Optional<Post> optional = pRepository.findById(post.getPostNo());
+		Optional<Post> optional = postRepository.findById(post.getPostNo());
 		
 		if(optional.isPresent()) {
 			Post existingPost = optional.get();
@@ -53,15 +53,15 @@ public class PostService {
 	            existingPost.setPostAlbum(post.getPostAlbumBase64());
 	        }
 			
-			return pRepository.save(existingPost);
+			return postRepository.save(existingPost);
 		}
 		
 			return null;			
 	}
 	
 	public boolean deletePost(Integer postNo) {
-		if(pRepository.existsById(postNo)) {
-			pRepository.deleteById(postNo);
+		if(postRepository.existsById(postNo)) {
+			postRepository.deleteById(postNo);
 			return true;
 		}
 		
