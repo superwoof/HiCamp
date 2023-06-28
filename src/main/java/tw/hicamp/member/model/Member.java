@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import tw.hicamp.forum.model.Post;
 import tw.hicamp.forum.model.PostComment;
+import tw.hicamp.forum.model.PostLike;
 
 @Entity
 @Table(name = "member")
@@ -48,4 +49,9 @@ public class Member {
 	@JsonIgnoreProperties("member")
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "member")
 	private Set<PostComment> postcomments = new HashSet<>();
+	
+	@JsonIgnore
+	@JsonIgnoreProperties("member")
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "member")
+	private Set<PostLike> postlikes = new HashSet<>();
 }

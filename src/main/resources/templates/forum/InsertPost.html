@@ -2,97 +2,95 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description"
-		content="Responsive Bootstrap4 Shop Template, Created by Imran Hossain from https://imransdesign.com/">
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="description"
+      content="Responsive Bootstrap4 Shop Template, Created by Imran Hossain from https://imransdesign.com/">
 
-	<!-- title -->
-	<title>登山EZ</title>
+   <!-- title -->
+   <title>登山EZ</title>
 
-<style>
-	.quick {
-	    background-color: #F28123;
-	    color: #051922;
-	    font-weight: 700;
-	    text-transform: uppercase;
-	    font-size: 15px;
-	    border: none !important;
-	    cursor: pointer;
-	    padding: 15px 25px;
-	    border-radius: 50px;
-	}
+   <style>
+      .quick {
+         background-color: #F28123;
+         color: #051922;
+         font-weight: 700;
+         text-transform: uppercase;
+         font-size: 15px;
+         border: none !important;
+         cursor: pointer;
+         padding: 15px 25px;
+         border-radius: 50px;
+      }
 
-	.quick:hover {
-		background-color: #051922;
-		color: #F28123;
-		transition: 0.3s;
-	}
-</style>
+      .quick:hover {
+         background-color: #051922;
+         color: #F28123;
+         transition: 0.3s;
+      }
+   </style>
 
 </head>
 
 <body>
-	<div th:replace="~{layout/frontTopBar}"></div>
+   <div th:replace="~{layout/frontTopBar}"></div>
 
-	<!-- breadcrumb-section -->
-	<div class="breadcrumb-section breadcrumb-bg">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2 text-center">
-					<div class="breadcrumb-text">
-						<p>大自然的秘密，在你探索中揭示</p>
-						<h1>探索者之家</h1>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end breadcrumb section -->
+   <!-- breadcrumb-section -->
+   <div class="breadcrumb-section breadcrumb-bg">
+      <div class="container">
+         <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+               <div class="breadcrumb-text">
+                  <p>大自然的秘密，在你探索中揭示</p>
+                  <h1>探索者之家</h1>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <!-- end breadcrumb section -->
 
-	<!-- latest news -->
-<div class="container">
-                     <h2 class="text-center mt-3 mb-5">發表文章</h2>
-                     <form th:action="@{/forum/added}" th:object="${post}" method="post">
-                        <div class="form-group">
-                           <label for="postType">文章類別:</label>
-                           <select th:field="*{postType}" id="postType" class="form-control">
-                              <option value="">請選擇文章類別</option>
-                              <option value="閒聊">閒聊</option>
-                              <option value="心得">心得</option>
-                              <option value="登山">登山</option>
-                              <option value="露營">露營</option>
-                              <option value="其他">其他</option>
-                           </select>
-                        </div>
-                        <div class="form-group">
-                           <label for="postTitle">請輸入標題：</label>
-                           <input th:field="*{postTitle}" id="postTitle" class="form-control" autocomplete="off" />
-                        </div>
-                        <div class="form-group">
-                           <label for="postContent">請輸入內容：</label>
-                           <textarea th:field="*{postContent}" id="postContent" class="form-control" rows="10"
-                              autocomplete="off"></textarea>
-                        </div>
-                        <div class="form-group">
-                           <label for="postAlbum">插入圖片：</label>
-                           <input th:field="*{postAlbum}" id="postAlbum" type="hidden" />
-                           <input type="file" class="form-control-file" id="postAlbumFile"
-                              onchange="convertImageToBase64(this)" />
-                        </div>
-                        <div class="form-group">
-                           <input type="submit" class="quick" value="發文">
-                           <input type="button" class="ml-1 quick" id="fillData" value="一鍵輸入">
-                        </div>
-                     </form>
-                  </div>	
-	
+   <!-- latest news -->
+   <div class="container">
+      <h2 class="text-center mt-3 mb-5">發表文章</h2>
+      <form th:action="@{/forum/added}" th:object="${post}" method="post">
+         <div class="form-group">
+            <label for="postType">文章類別:</label>
+            <select th:field="*{postType}" id="postType" class="form-control">
+               <option value="">請選擇文章類別</option>
+               <option value="閒聊">閒聊</option>
+               <option value="心得">心得</option>
+               <option value="登山">登山</option>
+               <option value="露營">露營</option>
+               <option value="其他">其他</option>
+            </select>
+         </div>
+         <div class="form-group">
+            <label for="postTitle">請輸入標題：</label>
+            <input th:field="*{postTitle}" id="postTitle" class="form-control" autocomplete="off" />
+         </div>
+         <div class="form-group">
+            <label for="postContent">請輸入內容：</label>
+            <textarea th:field="*{postContent}" id="postContent" class="form-control" rows="10"
+               autocomplete="off"></textarea>
+         </div>
+         <div class="form-group">
+            <label for="postAlbum">插入圖片：</label>
+            <input th:field="*{postAlbum}" id="postAlbum" type="hidden" />
+            <input type="file" class="form-control-file" id="postAlbumFile" onchange="convertImageToBase64(this)" />
+         </div>
+         <div class="form-group">
+            <input type="submit" class="quick" value="發文">
+            <input type="button" class="ml-1 quick" id="fillData" value="一鍵輸入">
+         </div>
+      </form>
+   </div>
 
-	<!-- end latest news -->
+   <!-- end latest news -->
 
-	<div th:replace="~{layout/frontBottomBar}"></div>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <div th:replace="~{layout/frontBottomBar}"></div>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <script>
       function convertImageToBase64(input) {
          if (input.files && input.files[0]) {

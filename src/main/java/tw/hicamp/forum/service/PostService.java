@@ -30,8 +30,12 @@ public class PostService {
 		return null;
 	}
 	
-	public List<Post> getPostbyTitle(String postTitle) {
-		return postRepository.findByPostTitle(postTitle);
+	public List<Post> getPostsByKeyword(String keyword) {
+	    return postRepository.findByPostTitleContainingOrderByPostNoDesc(keyword);
+	}
+	
+	public List<Post> getPostbyType(String postType) {
+		return postRepository.findByPostTypeOrderByPostNoDesc(postType);
 	}
 	
 	public List<Post> getAllPosts() {

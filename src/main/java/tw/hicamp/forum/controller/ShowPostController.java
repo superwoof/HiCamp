@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import tw.hicamp.forum.model.Post;
 import tw.hicamp.forum.model.PostComment;
@@ -31,13 +33,29 @@ public class ShowPostController{
         return "/forum/ManagerHomepage";
     }
 	
-	// 查全部貼文 (使用者頁面) 
+	// 查全部貼文 
 	@GetMapping("/forum/showall")
 	public String showAllPostMain(Model model) {
 		List<Post> posts = postService.getAllPosts();
 		model.addAttribute("posts", posts);
 		return "/forum/UserHomepage";
 	}
+	
+	// 查全部貼文by文章類別 
+	@GetMapping("/forum/showall/{postType}")
+	public String showAllPostMainByType(@PathVariable("postType") String postType, Model model) {
+	    List<Post> posts = postService.getPostbyType(postType);
+	    model.addAttribute("posts", posts);
+	    return "/forum/UserHomepage";
+	}
+	
+	// 查全部貼文by關鍵字查詢
+	@PostMapping("/forum/showall/search")
+    public String searchPosts(@RequestParam("keyword") String keyword, Model model) {
+        List<Post> posts = postService.getPostsByKeyword(keyword);
+        model.addAttribute("posts", posts);
+        return "/forum/UserHomepage";  
+    }
    
 	// 查單一貼文
 	@GetMapping("/forum/showpostbyno/{postNo}")
