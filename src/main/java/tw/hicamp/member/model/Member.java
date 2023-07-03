@@ -3,7 +3,6 @@ package tw.hicamp.member.model;
 
 import java.util.HashSet;
 import java.util.Set;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -17,6 +16,7 @@ import lombok.Data;
 import tw.hicamp.forum.model.Post;
 import tw.hicamp.forum.model.PostComment;
 import tw.hicamp.forum.model.PostLike;
+import tw.hicamp.forum.model.PostReport;
 
 @Entity
 @Table(name = "member")
@@ -40,18 +40,15 @@ public class Member {
 	private int memberStatus;
 	private byte[] memberPhoto;
 	
-	@JsonIgnore
-	@JsonIgnoreProperties("member")
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "member")
 	private Set<Post> posts = new HashSet<>();
 	
-	@JsonIgnore
-	@JsonIgnoreProperties("member")
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "member")
 	private Set<PostComment> postcomments = new HashSet<>();
 	
-	@JsonIgnore
-	@JsonIgnoreProperties("member")
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "member")
 	private Set<PostLike> postlikes = new HashSet<>();
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+	private Set<PostReport> postReports = new HashSet<>();
 }

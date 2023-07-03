@@ -55,6 +55,12 @@ public class Post{
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
 	private Set<PostComment> postComments = new HashSet<PostComment>();
 	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+	private Set<PostLike> postLikes = new HashSet<PostLike>(); 
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+	private Set<PostReport> postReports = new HashSet<>();
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "memberNo")
 	private Member member;

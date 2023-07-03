@@ -97,6 +97,7 @@ public class InsertPostController {
         return postComment;
     }
     
+    // 喜歡貼文
     @ResponseBody
     @PostMapping("/forum/addlike")
     public PostLike insertPostLike(@RequestBody PostLikeDTO postLikeDTO) {
