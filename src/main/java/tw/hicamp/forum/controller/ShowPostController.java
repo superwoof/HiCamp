@@ -1,8 +1,11 @@
 package tw.hicamp.forum.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import tw.hicamp.forum.model.Post;
 import tw.hicamp.forum.model.PostComment;
 import tw.hicamp.forum.service.PostCommentService;
+import tw.hicamp.forum.service.PostLikeService;
 import tw.hicamp.forum.service.PostService;
 
 
@@ -24,6 +28,9 @@ public class ShowPostController{
 	
 	@Autowired
 	private PostCommentService postcommentService;
+	
+	@Autowired
+	private PostLikeService postLikeService;
 	
 	// 查全部貼文 (管理者頁面)
 	@GetMapping("/forum/showallmanager")
@@ -67,5 +74,13 @@ public class ShowPostController{
 		model.addAttribute("comments", comments);
 		
 		return "/forum/PostContentByNo";
+	}
+	
+	@GetMapping("/forum/post/{postNo}/likesCount")
+	public ResponseEntity<Map<String, Integer>> showLikesCount(@PathVariable("postNo") Integer postNo) {
+	    int likesCount = postLikeService.getLikeByPostNo(postNo);
+	    Map<String, Integer> response = new HashMap<>();
+	    response.put("likesCount", likesCount);
+	    return ResponseEntity.ok(response);
 	}
 }

@@ -20,6 +20,27 @@
 		.cancel-edit-btn {
 			margin-right: 10px;
 		}
+
+		.buttons-row {
+			display: flex;
+			justify-content: space-between;
+			width: 200px;
+			margin-bottom: 20px;
+		}
+
+		.like-section,
+		.dislike-section {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.like-section span,
+		.dislike-section p {
+			display: inline-block;
+			vertical-align: middle;
+			margin-left: 3px;
+		}
 	</style>
 </head>
 
@@ -66,6 +87,16 @@
 							</p>
 							<h2 th:text="${post.postTitle}"></h2>
 							<div class="content" th:text="${post.postContent}" style="color:black; font-size: 20px">
+							</div>
+							<div class="buttons-row">
+								<div class="like-section">
+									<button class="btn btn-outline-secondary" id="like-button">喜歡</button>
+									<p id="likes-count"><span th:text="${likesCount}"></span></p>
+								</div>
+								<div class="dislike-section">
+									<button class="btn btn-outline-secondary" id="dislike-button">不喜歡</button>
+									<p id="dislikes-count">10<span th:text="${dislikesCount}"></span></p>
+								</div>
 							</div>
 						</div>
 
@@ -305,6 +336,50 @@
 			});
 		}
 
+		document.addEventListener('DOMContentLoaded', (event) => {
+			updateLikeCount();
+		});
+		document.getElementById('like-button').addEventListener('click', function () {
+			let postNo = document.getElementById('postNo').value;
+
+			let postLike = {
+				postNo: postNo
+			};
+
+			const url = 'http://localhost:8080/HiCamp/forum/addlike';
+
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(postLike),
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log('Success:', data);
+					updateLikeCount();
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+		});
+
+		function updateLikeCount() {
+			let postNo = document.getElementById('postNo').value;
+
+			fetch(`http://localhost:8080/HiCamp/forum/post/${postNo}/likesCount`, {
+				method: 'GET',
+			})
+				.then(response => response.json())
+				.then(data => {
+					let likesCountElem = document.getElementById('likes-count').querySelector('span');;
+					likesCountElem.textContent = data.likesCount;
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+		}
 	</script>
 </body>
 

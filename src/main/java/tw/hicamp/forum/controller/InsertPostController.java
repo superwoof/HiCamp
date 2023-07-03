@@ -5,9 +5,12 @@ import java.util.Date;
 import tw.hicamp.member.model.Member;
 import tw.hicamp.member.service.MemberService;
 import tw.hicamp.forum.dto.PostCommentDTO;
+import tw.hicamp.forum.dto.PostLikeDTO;
 import tw.hicamp.forum.model.Post;
 import tw.hicamp.forum.model.PostComment;
+import tw.hicamp.forum.model.PostLike;
 import tw.hicamp.forum.service.PostCommentService;
+import tw.hicamp.forum.service.PostLikeService;
 import tw.hicamp.forum.service.PostService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ public class InsertPostController {
     
     @Autowired
     private PostCommentService postCommentService;
+    
+    @Autowired
+    private PostLikeService postLikeService;
     
     @Autowired
     private MemberService memberService;
@@ -89,5 +95,25 @@ public class InsertPostController {
         postCommentService.insertComment(postComment);
         
         return postComment;
+    }
+    
+    @ResponseBody
+    @PostMapping("/forum/addlike")
+    public PostLike insertPostLike(@RequestBody PostLikeDTO postLikeDTO) {
+        Integer memberNo = (Integer) session.getAttribute("memberNo");
+        if (memberNo == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "請登入會員");
+        }
+
+        Member member = memberService.findByNo(memberNo);
+        Post post = postService.getPostbyNo(postLikeDTO.getPostNo());
+        
+        PostLike postLike = new PostLike();
+        postLike.setMember(member);
+        postLike.setPost(post);
+        
+        postLikeService.addLike(postLike);
+        
+        return postLike;
     }
 }
