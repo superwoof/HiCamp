@@ -1,5 +1,6 @@
 package tw.hicamp.forum.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,23 @@ public class ShowPostController{
 	// 查全部貼文 (管理者頁面)
 	@GetMapping("/forum/showallmanager")
     public String getAllPostMain(Model model) {
-        List<Post> posts = postService.getAllPosts();
-        model.addAttribute("posts", posts);
-        return "/forum/ManagerHomepage";
+		List<Post> posts = postService.getAllPosts();
+	    List<Map<String, Object>> postDetails = new ArrayList<>();
+
+	    for (Post post : posts) {
+	        Map<String, Object> detail = new HashMap<>();
+	        int likecounts = postLikeService.getLikeByPostNo(post.getPostNo());
+	        List<PostComment> comments = postcommentService.getCommentsByPostSortedByNo(post);
+	        
+	        detail.put("post", post);
+	        detail.put("likesCount", likecounts);
+	        detail.put("commentsCount", comments.size());
+
+	        postDetails.add(detail);
+	    }
+
+	    model.addAttribute("postDetails", postDetails);
+	    return "/forum/ManagerHomepage";
     }
 	
 	// 查全部貼文 

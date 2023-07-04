@@ -95,7 +95,39 @@
 								</div>
 								<div class="dislike-section">
 									<button class="btn btn-outline-secondary" id="dislike-button">不喜歡</button>
-									<p id="dislikes-count">10<span th:text="${dislikesCount}"></span></p>
+									<p id="dislikes-count">0<span th:text="${dislikesCount}"></span></p>
+								</div>
+							</div>
+							<div class="report-section">
+								<button class="btn btn-outline-danger" id="report-button" data-toggle="modal"
+									data-target="#reportModal">檢舉</button>
+							</div>
+						</div>
+						<div class="modal fade" id="reportModal" tabindex="-1" role="dialog"
+							aria-labelledby="reportModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="reportModalLabel">檢舉文章</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+										<p>請選擇檢舉原因：</p>
+										<select id="report-reason" class="form-control">
+											<option value="">請選擇檢舉原因</option>
+											<option value="垃圾訊息">垃圾訊息</option>
+											<option value="仇恨言論">仇恨言論</option>
+											<option value="不實資訊">不實資訊</option>
+											<option value="色情暴力">色情暴力</option>
+											<option value="騷擾">騷擾</option>
+										</select>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+										<button type="button" class="btn btn-primary" id="submit-report">提交檢舉</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -158,11 +190,11 @@
 						<div class="recent-posts">
 							<h4>其他文章</h4>
 							<ul>
-								<li><a href="single-news.html">【徵文活動】你，發現了什麼不一樣的陽明山？</a></li>
-								<li><a href="single-news.html">【新聞】露營別亂砍、亂燒漂流木 9溪床露營客違反森林法起訴</a></li>
-								<li><a href="single-news.html">《群山之島》XR特展登場 帶領觀眾沉浸式體驗山林世界</a></li>
-								<li><a href="single-news.html">【新聞】85公斤公熊左前肢困套索 活活脫水渴死命喪大雪山</a></li>
-								<li><a href="single-news.html">【步道資訊】八通關玉山線八通關往荖濃溪營地步道2.7K處崩塌阻礙...</a></li>
+								<li><a href="1">【徵文活動】你，發現了什麼不一樣的陽明山？</a></li>
+								<li><a href="2">【新聞】露營別亂砍、亂燒漂流木 9溪床露營客違反森林法起訴</a></li>
+								<li><a href="3">《群山之島》XR特展登場 帶領觀眾沉浸式體驗山林世界</a></li>
+								<li><a href="4">【新聞】85公斤公熊左前肢困套索 活活脫水渴死命喪大雪山</a></li>
+								<li><a href="5">【步道資訊】八通關玉山線八通關往荖濃溪營地步道2.7K處崩塌阻礙...</a></li>
 							</ul>
 						</div>
 					</div>
@@ -174,6 +206,36 @@
 
 	<div th:replace="~{layout/frontBottomBar}"></div>
 	<script>
+		$(document).ready(function() {
+    $('#submit-report').click(function() {
+        var postNo = $('#postNo').val();  // 從隱藏的 input 標籤獲取 postNo
+        let reportReason = $('#report-reason').val();
+
+        $.ajax({
+            url: '/HiCamp/forum/addreport',  // 請將這裡替換成你的 API 的 URL
+            type: 'POST',
+             data: JSON.stringify({  // 將資料轉換成 JSON 格式
+                PostNo: postNo,
+                postReportReason: reportReason
+            }),
+            contentType: 'application/json',  // 告訴伺服器我們正在發送 JSON 資料
+            success: function(response) {
+                // 如果後端成功接收並處理了我們的請求，則執行這個函數
+                // 'response' 是伺服器返回的資料，你可以用 console.log(response) 來查看它
+                alert('感謝您的檢舉，我們會儘快處理');
+                $('#reportModal').modal('hide');  // 隱藏 modal
+                $('#report-reason').val('');  // 清空 textarea
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // 如果有錯誤發生，則執行這個函數
+                // 'jqXHR' 是一個包含有關錯誤的物件，'textStatus' 和 'errorThrown' 是描述錯誤的字串
+                console.log(textStatus, errorThrown);
+                alert('發生錯誤，請稍後再試');
+            }
+        });
+    });
+});
+		
 		// 新增留言
 		document.getElementById('submitBtn').addEventListener('click', function (event) {
 			event.preventDefault();

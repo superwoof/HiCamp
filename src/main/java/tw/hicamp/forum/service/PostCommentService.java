@@ -60,5 +60,4 @@ public class PostCommentService {
 	    return postCommentRepository.findByPostOrderByPostCommentNo(post);
 	}
 
-
 }

@@ -28,7 +28,7 @@
                   <div class="row column_title">
                      <div class="col-md-12">
                         <div class="page_title" style="display: flex; align-items: center">
-                           <h2>論壇後台</h2>                   
+                           <h2>論壇後台</h2>
                         </div>
                      </div>
                   </div>
@@ -39,22 +39,28 @@
                               <th>編號</th>
                               <th>類別</th>
                               <th>標題</th>
+                              <th>按讚</th>
+                              <th>留言</th>
+                              <th>檢舉狀態</th>
                               <th>作者</th>
                               <th>最後編輯日期</th>
                               <th>操作</th>
                            </tr>
                         </thead>
                         <tbody>
-                           <tr th:each="post : ${posts}">
-                              <td th:text="${post.postNo}"></td>
-                              <td th:text="${post.postType}"></td>
-                              <td th:text="${post.postTitle}"></td>
-                              <td th:text="${post.member.memberName}"></td>
-                              <td th:text="${#dates.format(post.postDate, 'yyyy/MM/dd HH:mm:ss')}"></td>
+                           <tr th:each="detail : ${postDetails}">
+                              <td th:text="${detail.post.postNo}"></td>
+                              <td th:text="${detail.post.postType}"></td>
+                              <td th:text="${detail.post.postTitle}"></td>
+                              <td th:text="${detail.likesCount}"></td>
+                              <td th:text="${detail.commentsCount}"></td>
+                              <td th:text="${detail.post.postNo}"></td>
+                              <td th:text="${detail.post.member.memberName}"></td>
+                              <td th:text="${#dates.format(detail.post.postDate, 'yyyy/MM/dd HH:mm:ss')}"></td>
                               <td>
-                                 <a th:href="@{/forum/update/{postNo}(postNo=${post.postNo})}"
+                                 <a th:href="@{/forum/update/{postNo}(postNo=${detail.post.postNo})}"
                                     class="btn btn-success">修改</a>
-                                 <a th:data-postNo="${post.postNo}" class="btn btn-danger"
+                                 <a th:data-postNo="${detail.post.postNo}" class="btn btn-danger"
                                     style="color:whitesmoke">刪除</a>
                               </td>
                            </tr>

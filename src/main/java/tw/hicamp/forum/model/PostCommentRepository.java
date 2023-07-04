@@ -8,4 +8,6 @@ public interface PostCommentRepository extends JpaRepository<PostComment, Intege
 	
 	List<PostComment> findByPostOrderByPostCommentNo(Post post);
 
+	int countCommentByPostNo(Integer postNo);
+
 }
