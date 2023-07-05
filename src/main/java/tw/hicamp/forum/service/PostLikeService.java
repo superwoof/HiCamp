@@ -23,4 +23,8 @@ public class PostLikeService {
 	public int getLikeByPostNo(Integer postNo) {
 		return postLikeRepository.countLikeByPostNo(postNo);
 	}
+	
+	public boolean hasUserLikedPost(Integer memberNo, Integer postNo) {
+	    return postLikeRepository.findByMemberNoAndPostNo(memberNo, postNo) != null;
+	}
 }

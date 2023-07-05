@@ -140,7 +140,7 @@ public class InsertPostController {
         postReport.setMember(member);
         postReport.setPost(post);
         postReport.setPostReportReason(postReportDTO.getPostReportReason());
-        postReport.setPostReportStatus("Pending"); 
+        postReport.setPostReportStatus("待審核"); 
 
         postReportService.addReport(postReport);
 

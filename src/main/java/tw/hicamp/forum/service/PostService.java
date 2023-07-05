@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import tw.hicamp.forum.model.Post;
+import tw.hicamp.forum.model.PostReport;
 import tw.hicamp.forum.model.PostRepository;
 
 @Service
@@ -70,6 +71,24 @@ public class PostService {
 		}
 		
 		return false;
+	}
+	
+	@Transactional
+	public Post hidePost(Integer postNo) {
+	    Optional<Post> optional = postRepository.findById(postNo);
+	    
+	    if(optional.isPresent()) {
+	        Post existingPost = optional.get();
+	        existingPost.setPostStatus(1);
+	        
+	        for (PostReport report : existingPost.getPostReports()) {
+	            report.setPostReportStatus("已完成");
+	        }
+
+	        return postRepository.save(existingPost);
+	    }
+	    
+	    return null;            
 	}
 }
 

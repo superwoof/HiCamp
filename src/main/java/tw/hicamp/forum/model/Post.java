@@ -52,6 +52,9 @@ public class Post{
 	@Column(name = "postAlbum")
 	private byte[] postAlbum;
 	
+	@Column(name = "postStatus")
+	private Integer postStatus;
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
 	private Set<PostComment> postComments = new HashSet<PostComment>();
 	

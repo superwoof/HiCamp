@@ -13,12 +13,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpSession;
 import tw.hicamp.forum.model.Post;
 import tw.hicamp.forum.model.PostComment;
+import tw.hicamp.forum.model.PostReport;
 import tw.hicamp.forum.service.PostCommentService;
 import tw.hicamp.forum.service.PostLikeService;
+import tw.hicamp.forum.service.PostReportService;
 import tw.hicamp.forum.service.PostService;
+import tw.hicamp.member.model.Member;
+import tw.hicamp.member.service.MemberService;
 
 
 @Controller
@@ -28,10 +34,16 @@ public class ShowPostController{
 	private PostService postService;
 	
 	@Autowired
-	private PostCommentService postcommentService;
+	private PostCommentService postCommentService;
 	
 	@Autowired
 	private PostLikeService postLikeService;
+	
+	@Autowired
+	private PostReportService postReportService;
+	
+	@Autowired
+	private MemberService memberService;
 	
 	// 查全部貼文 (管理者頁面)
 	@GetMapping("/forum/showallmanager")
@@ -42,7 +54,7 @@ public class ShowPostController{
 	    for (Post post : posts) {
 	        Map<String, Object> detail = new HashMap<>();
 	        int likecounts = postLikeService.getLikeByPostNo(post.getPostNo());
-	        List<PostComment> comments = postcommentService.getCommentsByPostSortedByNo(post);
+	        List<PostComment> comments = postCommentService.getCommentsByPostSortedByNo(post);
 	        
 	        detail.put("post", post);
 	        detail.put("likesCount", likecounts);
@@ -81,21 +93,44 @@ public class ShowPostController{
    
 	// 查單一貼文
 	@GetMapping("/forum/showpostbyno/{postNo}")
-	public String getForumPostDetail1(@PathVariable("postNo") Integer postNo, Model model) {
+	public String getForumPostDetail1(@PathVariable("postNo") Integer postNo, Model model,HttpSession session) {
 		Post post = postService.getPostbyNo(postNo);
-		List<PostComment> comments = postcommentService.getCommentsByPostSortedByNo(post);
+		List<PostComment> comments = postCommentService.getCommentsByPostSortedByNo(post);
 		
+		Integer currentMemberNo = (Integer) session.getAttribute("memberNo");
+
+		if (currentMemberNo != null) {
+			Member currentMember = memberService.findByNo(currentMemberNo);
+			model.addAttribute("currentMember", currentMember);
+		}
 		model.addAttribute("post", post);
 		model.addAttribute("comments", comments);
 		
 		return "/forum/PostContentByNo";
 	}
 	
+	// 查貼文讚數
 	@GetMapping("/forum/post/{postNo}/likesCount")
 	public ResponseEntity<Map<String, Integer>> showLikesCount(@PathVariable("postNo") Integer postNo) {
 	    int likesCount = postLikeService.getLikeByPostNo(postNo);
 	    Map<String, Integer> response = new HashMap<>();
 	    response.put("likesCount", likesCount);
 	    return ResponseEntity.ok(response);
+	}
+	
+	// 查檢舉貼文
+	@GetMapping("/forum/showreports")
+	public String getAllReports(Model model) {
+		List<PostReport> reports = postReportService.getAllReports();
+	    model.addAttribute("reports", reports);
+	    return "/forum/ManagerReport";
+	}
+	
+	// 隱藏貼文
+	@PostMapping("/forum/hide/{postNo}")
+	@ResponseBody
+	public ResponseEntity<Void> hidePost(@PathVariable("postNo") Integer postNo) {
+	    postService.hidePost(postNo);
+	    return ResponseEntity.ok().build();
 	}
 }

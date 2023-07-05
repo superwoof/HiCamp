@@ -35,5 +35,5 @@ public class PostReport {
 	
     @Column(name = "postReportStatus")
     private String postReportStatus;
-	
+    
 }
