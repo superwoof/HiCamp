@@ -53,7 +53,10 @@ public class Post{
 	private byte[] postAlbum;
 	
 	@Column(name = "postStatus")
-	private Integer postStatus;
+	private String postStatus;
+	
+	@Column(name = "postViewCount")
+	private int postViewCount;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
 	private Set<PostComment> postComments = new HashSet<PostComment>();
@@ -67,6 +70,10 @@ public class Post{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "memberNo")
 	private Member member;
+	
+	public Post() {
+		this.postStatus = "正常";
+	}
 	
 	public String getPostAlbumBase64() {
 	    return (this.postAlbum != null) ? Base64.getEncoder().encodeToString(this.postAlbum) : null;

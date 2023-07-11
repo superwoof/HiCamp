@@ -40,7 +40,7 @@
                                         <th>文章編號</th>
                                         <th>檢舉原因</th>
                                         <th>檢舉者</th>
-                                        <th>檢舉狀態</th>
+                                        <th>文章狀態</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
@@ -50,7 +50,7 @@
                                         <td th:text="${report.post.postNo}"></td>
                                         <td th:text="${report.postReportReason}"></td>
                                         <td th:text="${report.member.memberName}"></td>
-                                        <td th:text="${report.postReportStatus}"></td>
+                                        <td th:text="${report.post.postStatus}"></td>
                                         <td>
                                             <a th:data-postNo="${report.post.postNo}" style="color:whitesmoke"
                                                 class="btn btn-warning hide-btn">隱藏</a>

@@ -59,6 +59,7 @@ public class ShowPostController{
 	        detail.put("post", post);
 	        detail.put("likesCount", likecounts);
 	        detail.put("commentsCount", comments.size());
+	        detail.put("viewsCount", post.getPostViewCount());
 
 	        postDetails.add(detail);
 	    }
@@ -78,7 +79,7 @@ public class ShowPostController{
 	// 查全部貼文by文章類別 
 	@GetMapping("/forum/showall/{postType}")
 	public String showAllPostMainByType(@PathVariable("postType") String postType, Model model) {
-	    List<Post> posts = postService.getPostbyType(postType);
+	    List<Post> posts = postService.getPostsByType(postType);
 	    model.addAttribute("posts", posts);
 	    return "/forum/UserHomepage";
 	}
@@ -103,10 +104,25 @@ public class ShowPostController{
 			Member currentMember = memberService.findByNo(currentMemberNo);
 			model.addAttribute("currentMember", currentMember);
 		}
+		
+		postService.updatePostViewCount(post);
+		
+		List<Post> topPosts = postService.getTop5PostsByViews();
+		
 		model.addAttribute("post", post);
 		model.addAttribute("comments", comments);
+		model.addAttribute("topPosts", topPosts);
 		
 		return "/forum/PostContentByNo";
+	}
+	
+	// 查作者貼文
+	@GetMapping("/forum/showpostbymember/{memberNo}")
+	public String showPostsByMember(@PathVariable("memberNo") int memberNo, Model model) {
+	    Member member = memberService.findByNo(memberNo);
+	    List<Post> posts = postService.getPostsByMember(member);
+	    model.addAttribute("posts", posts);
+	    return "/forum/PostContentByMember"; 
 	}
 	
 	// 查貼文讚數

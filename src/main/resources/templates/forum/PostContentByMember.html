@@ -22,42 +22,14 @@
 			<div class="row">
 				<div class="col-lg-8 offset-lg-2 text-center">
 					<div class="breadcrumb-text">
-						<p>大自然的秘密，在你探索中揭示</p>
-						<h1>探索者之家</h1>
+						<p>HICAMP</p>
+						<h1>我的文章</h1>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- end breadcrumb section -->
-
-	<div class="container mt-2">
-		<div class="row">
-			<div class="col-lg-2">
-				<a href="/HiCamp/forum/add">
-					<button class="create btn btn-outline-secondary btn-lg">發表文章</button>
-				</a>
-			</div>
-			<div class="col-lg-6 offset-lg-1 text-center">
-				<button class="btn btn-lg btn-outline-secondary mr-4"
-					onclick="window.location.href='/HiCamp/forum/showall/閒聊'">閒聊</button>
-				<button class="btn btn-lg btn-outline-secondary mr-4"
-					onclick="window.location.href='/HiCamp/forum/showall/心得'">心得</button>
-				<button class="btn btn-lg btn-outline-secondary mr-4"
-					onclick="window.location.href='/HiCamp/forum/showall/登山'">登山</button>
-				<button class="btn btn-lg btn-outline-secondary mr-4"
-					onclick="window.location.href='/HiCamp/forum/showall/露營'">露營</button>
-				<button class="btn btn-lg btn-outline-secondary"
-					onclick="window.location.href='/HiCamp/forum/showall/其他'">其他</button>
-			</div>
-			<div class="col-lg-3">
-				<form class="form-inline float-right" action="/HiCamp/forum/showall/search" method="post">
-					<input class="form-control mr-sm-2" type="text" placeholder="找標題.." name="keyword" required>
-					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜尋</button>
-				</form>
-			</div>
-		</div>
-	</div>
 
 	<!-- latest news -->
 	<div class="latest-news mt-100 mb-150">
@@ -94,6 +66,11 @@
 								</p>
 							</div>
 						</a>
+						<div class="post-action-buttons">
+							<a th:href="@{/forum/update/{postNo}(postNo=${post.postNo})}"
+								class="btn btn-outline-success btn-sm">編輯</a>
+							<button type="button" class="btn btn-outline-danger btn-sm">刪除</button>
+						</div>
 					</div>
 				</div>
 			</div>

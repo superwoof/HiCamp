@@ -41,6 +41,12 @@
 			vertical-align: middle;
 			margin-left: 3px;
 		}
+
+		.title-and-share {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
 	</style>
 </head>
 
@@ -85,16 +91,22 @@
 								<span class="date"><i class="fas fa-calendar"></i> <span
 										th:text="${#dates.format(post.postDate, 'yyyy/MM/dd HH:mm:ss')}"></span></span>
 							</p>
-							<h2 th:text="${post.postTitle}"></h2>
-							<div class="content" th:text="${post.postContent}" style="color:black; font-size: 20px">
+							<div class="title-and-share">
+								<h3 th:text="${post.postTitle}"></h3>
+								<div class="line-it-button" data-lang="zh_Hant" data-type="share-a" data-env="REAL"
+									th:data-url="'http://localhost:8080/HiCamp/forum/showpostbyno/' + ${post.postNo}"
+									data-color="default" data-size="large" data-count="false" data-ver="3"
+									style="display: none;"></div>
+							</div>
+							<div class="content" th:utext="${post.postContent}">
 							</div>
 							<div class="buttons-row">
 								<div class="like-section">
-									<button class="btn btn-outline-secondary" id="like-button">喜歡</button>
+									<button class="btn btn-outline-primary" id="like-button">喜歡</button>
 									<p id="likes-count"><span th:text="${likesCount}"></span></p>
 								</div>
 								<div class="dislike-section">
-									<button class="btn btn-outline-secondary" id="dislike-button">不喜歡</button>
+									<button class="btn btn-outline-primary" id="dislike-button">不喜歡</button>
 									<p id="dislikes-count">0<span th:text="${dislikesCount}"></span></p>
 								</div>
 							</div>
@@ -190,13 +202,14 @@
 				<div class="col-lg-4">
 					<div class="sidebar-section">
 						<div class="recent-posts">
-							<h4>其他文章</h4>
+							<h4>熱門文章</h4>
 							<ul>
-								<li><a href="1">【徵文活動】你，發現了什麼不一樣的陽明山？</a></li>
-								<li><a href="2">【新聞】露營別亂砍、亂燒漂流木 9溪床露營客違反森林法起訴</a></li>
-								<li><a href="3">《群山之島》XR特展登場 帶領觀眾沉浸式體驗山林世界</a></li>
-								<li><a href="4">【新聞】85公斤公熊左前肢困套索 活活脫水渴死命喪大雪山</a></li>
-								<li><a href="5">【步道資訊】八通關玉山線八通關往荖濃溪營地步道2.7K處崩塌阻礙...</a></li>
+								<li th:each="post : ${topPosts}">
+									<a th:href="@{/forum/showpostbyno/{postNo}(postNo=${post.postNo})}">
+										<span th:text="'【' + ${post.postType} + '】'"></span> <span
+											th:text="${post.postTitle}"></span>
+									</a>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -207,6 +220,8 @@
 	<!-- end single article section -->
 
 	<div th:replace="~{layout/frontBottomBar}"></div>
+	<script src="https://www.line-website.com/social-plugins/js/thirdparty/loader.min.js" async="async"
+		defer="defer"></script>
 	<script>
 		// 檢舉貼文
 		$(document).ready(function () {

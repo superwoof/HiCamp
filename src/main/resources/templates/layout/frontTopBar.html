@@ -75,6 +75,7 @@
 														<th:block th:case="${false}">
 														<a class="shopping-cart"><i th:text="${session.name}"></i></a>
 														<ul class="sub-menu" style="width: 75px;">
+															<li><a th:href="@{/forum/showpostbymember/{memberNo}(memberNo=${session.memberNo})}">我的文章</a></li>
 															<li><a href="http://localhost:8080/HiCamp/projectmembersetting">設定</a></li>
 															<li><a href="http://localhost:8080/HiCamp/logout">登出</a></li>
 														</ul>

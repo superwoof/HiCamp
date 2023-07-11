@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import tw.hicamp.forum.model.Post;
-import tw.hicamp.forum.model.PostReport;
 import tw.hicamp.forum.model.PostRepository;
+import tw.hicamp.member.model.Member;
 
 @Service
 public class PostService {
@@ -35,8 +35,12 @@ public class PostService {
 	    return postRepository.findByPostTitleContainingOrderByPostNoDesc(keyword);
 	}
 	
-	public List<Post> getPostbyType(String postType) {
+	public List<Post> getPostsByType(String postType) {
 		return postRepository.findByPostTypeOrderByPostNoDesc(postType);
+	}
+	
+	public List<Post> getPostsByMember(Member member){
+		return postRepository.findByMemberOrderByPostNoDesc(member);
 	}
 	
 	public List<Post> getAllPosts() {
@@ -79,16 +83,22 @@ public class PostService {
 	    
 	    if(optional.isPresent()) {
 	        Post existingPost = optional.get();
-	        existingPost.setPostStatus(1);
+	        existingPost.setPostStatus("隱藏");
 	        
-	        for (PostReport report : existingPost.getPostReports()) {
-	            report.setPostReportStatus("已完成");
-	        }
-
 	        return postRepository.save(existingPost);
 	    }
 	    
 	    return null;            
+	}
+	
+	@Transactional
+	public Post updatePostViewCount(Post post) {
+	    post.setPostViewCount(post.getPostViewCount() + 1);
+	    return postRepository.save(post);
+	}
+	
+	public List<Post> getTop5PostsByViews() {
+	    return postRepository.findTop5ByOrderByPostViewCountDesc();
 	}
 }
 
